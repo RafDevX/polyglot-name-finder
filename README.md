@@ -16,7 +16,7 @@ Assuming your wordlists are wordlists at `wordlists/`:
 MIN_WORD_LENGTH=3 target/release/polyglot_name_finder wordlists/*.txt
 ```
 
-Use the `MIN_WORD_LENGTH` environment variable to filter out words you consider too short.
+Use the `MIN_WORD_LENGTH` environment variable to filter out words you consider too short. Defaults to `1`.
 
 In order to, for example, support diceware wordlists, only the last whitespace-separated column is considered.
 
