@@ -73,11 +73,9 @@ fn handle_line(
     index: usize,
     line: &str,
 ) -> Result<(), Box<dyn Error>> {
-    let mut line = line.split_whitespace();
-    if line.next().is_none() {
-        return Err(format!("File {path} has no dice numbers column on line {index}").into());
-    }
-    if let Some(word) = line.next() {
+    let word = line.split_whitespace().last();
+
+    if let Some(word) = word {
         let word = normalize_word(word.to_owned());
         if word.len() >= min_word_length {
             let count = words.entry(word).or_insert(0);
