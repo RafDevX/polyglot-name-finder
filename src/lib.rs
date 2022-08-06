@@ -97,5 +97,28 @@ fn normalize_word(word: String) -> String {
         }
     }
 
+    let normalized = normalized.to_lowercase();
+
     unidecode::unidecode(&normalized)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn normalize_words() {
+        let words = [
+            ["", ""],
+            ["&&", ""],
+            ["^", ""],
+            ["normal", "normal"],
+            ["æ52m⁴ô", "aemo"],
+            ["Ÿ£€$y ã", "yya"],
+        ];
+
+        for [word, normalized] in words {
+            assert_eq!(normalized, normalize_word(word.to_owned()));
+        }
+    }
 }
