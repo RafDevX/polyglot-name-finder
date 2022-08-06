@@ -22,13 +22,9 @@ impl Config {
 
         let wordlist_file_paths: Vec<String> = args.collect();
 
-        let default_min_word_length = 1;
-        let min_word_length =
-            env::var("MIN_WORD_LENGTH").unwrap_or(default_min_word_length.to_string());
-        let min_word_length: usize = match min_word_length.parse() {
-            Ok(v) => v,
-            Err(_) => return Err("Failed to parse MIN_WORD_LENGTH"),
-        };
+        let min_word_length = env::var("MIN_WORD_LENGTH")
+            .map_or(Ok(1), |x| x.parse())
+            .map_err(|_| "Failed to parse MIN_WORD_LENGTH")?;
 
         if wordlist_file_paths.is_empty() {
             Err("No wordlist files provided")
