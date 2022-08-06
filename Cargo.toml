@@ -1,0 +1,10 @@
+[package]
+name = "polyglot_name_finder"
+version = "0.1.0"
+description = "Helps find a name that is a word in multiple languages"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+unidecode = "0.3.0"
