@@ -6,8 +6,15 @@ fn main() {
         process::exit(1);
     });
 
-    if let Err(e) = polyglot_name_finder::run(wordlists) {
-        eprintln!("Application error: {}", e);
-        process::exit(1);
+    match polyglot_name_finder::run(wordlists) {
+        Ok(common_words) => {
+            for word in common_words {
+                println!("{word}");
+            }
+        }
+        Err(e) => {
+            eprintln!("Application error: {}", e);
+            process::exit(1);
+        }
     }
 }

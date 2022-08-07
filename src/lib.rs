@@ -1,6 +1,6 @@
 use std::{collections::HashMap, env, error::Error, fs};
 
-pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
+pub fn run(config: Config) -> Result<Vec<String>, Box<dyn Error>> {
     let mut common_words = intersect_wordlists(
         config.wordlist_file_paths,
         config.min_word_length,
@@ -11,11 +11,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
         common_words.sort_unstable();
     }
 
-    for word in common_words {
-        println!("{word}");
-    }
-
-    Ok(())
+    Ok(common_words)
 }
 
 pub struct Config {
