@@ -2,11 +2,15 @@ use std::{collections::HashMap, env, error::Error, fs};
 use unidecode;
 
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
-    let common_words = intersect_wordlists(
+    let mut common_words = intersect_wordlists(
         config.wordlist_file_paths,
         config.min_word_length,
         config.require_diff_letters,
     )?;
+
+    if !config.no_sort {
+        common_words.sort_unstable();
+    }
 
     for word in common_words {
         println!("{word}");
@@ -19,6 +23,7 @@ pub struct Config {
     wordlist_file_paths: Vec<String>,
     min_word_length: usize,
     require_diff_letters: bool,
+    no_sort: bool,
 }
 
 impl Config {
@@ -32,6 +37,7 @@ impl Config {
             .map_err(|_| "Failed to parse MIN_WORD_LENGTH")?;
 
         let require_diff_letters = env::var("REQUIRE_DIFF_LETTERS").is_ok();
+        let no_sort = env::var("NO_SORT").is_ok();
 
         if wordlist_file_paths.is_empty() {
             Err("No wordlist files provided")
@@ -40,6 +46,7 @@ impl Config {
                 wordlist_file_paths,
                 min_word_length,
                 require_diff_letters,
+                no_sort,
             })
         }
     }
