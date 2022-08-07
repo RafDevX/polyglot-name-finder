@@ -105,15 +105,11 @@ fn handle_line(
 }
 
 fn normalize_word(word: String) -> String {
-    let mut normalized = String::new();
-
-    for c in word.chars() {
-        if c.is_alphabetic() {
-            normalized.push(c);
-        }
-    }
-
-    let normalized = normalized.to_lowercase();
+    let normalized = word
+        .chars()
+        .filter(|c| c.is_alphabetic())
+        .collect::<String>()
+        .to_lowercase();
 
     unidecode::unidecode(&normalized)
 }
