@@ -31,8 +31,8 @@ impl Config {
             .map_or(Ok(1), |x| x.parse())
             .map_err(|_| "Failed to parse MIN_WORD_LENGTH")?;
 
-        let require_diff_letters = env::var("REQUIRE_DIFF_LETTERS").is_ok();
-        let sort = !env::var("NO_SORT").is_ok();
+        let require_diff_letters = parse_env_var_bool("REQUIRE_DIFF_LETTERS");
+        let sort = !parse_env_var_bool("NO_SORT");
 
         if wordlist_file_paths.is_empty() {
             Err("No wordlist files provided")
@@ -44,6 +44,13 @@ impl Config {
                 sort,
             })
         }
+    }
+}
+
+fn parse_env_var_bool(name: &str) -> bool {
+    match env::var(name) {
+        Ok(v) => v != "0" && v.to_lowercase() != "false",
+        Err(_) => false,
     }
 }
 
