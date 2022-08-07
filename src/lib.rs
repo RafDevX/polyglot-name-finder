@@ -7,7 +7,7 @@ pub fn run(config: Config) -> Result<Vec<String>, Box<dyn Error>> {
         config.require_diff_letters,
     )?;
 
-    if !config.no_sort {
+    if config.sort {
         common_words.sort_unstable();
     }
 
@@ -18,7 +18,7 @@ pub struct Config {
     wordlist_file_paths: Vec<String>,
     min_word_length: usize,
     require_diff_letters: bool,
-    no_sort: bool,
+    sort: bool,
 }
 
 impl Config {
@@ -32,7 +32,7 @@ impl Config {
             .map_err(|_| "Failed to parse MIN_WORD_LENGTH")?;
 
         let require_diff_letters = env::var("REQUIRE_DIFF_LETTERS").is_ok();
-        let no_sort = env::var("NO_SORT").is_ok();
+        let sort = !env::var("NO_SORT").is_ok();
 
         if wordlist_file_paths.is_empty() {
             Err("No wordlist files provided")
@@ -41,7 +41,7 @@ impl Config {
                 wordlist_file_paths,
                 min_word_length,
                 require_diff_letters,
-                no_sort,
+                sort,
             })
         }
     }
