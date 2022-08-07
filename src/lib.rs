@@ -2,7 +2,11 @@ use std::{collections::HashMap, env, error::Error, fs};
 use unidecode;
 
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
-    let common_words = intersect_wordlists(config.wordlist_file_paths, config.min_word_length)?;
+    let common_words = intersect_wordlists(
+        config.wordlist_file_paths,
+        config.min_word_length,
+        config.require_diff_letters,
+    )?;
 
     for word in common_words {
         println!("{word}");
@@ -14,6 +18,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 pub struct Config {
     wordlist_file_paths: Vec<String>,
     min_word_length: usize,
+    require_diff_letters: bool,
 }
 
 impl Config {
@@ -26,12 +31,15 @@ impl Config {
             .map_or(Ok(1), |x| x.parse())
             .map_err(|_| "Failed to parse MIN_WORD_LENGTH")?;
 
+        let require_diff_letters = env::var("REQUIRE_DIFF_LETTERS").is_ok();
+
         if wordlist_file_paths.is_empty() {
             Err("No wordlist files provided")
         } else {
             Ok(Config {
                 wordlist_file_paths,
                 min_word_length,
+                require_diff_letters,
             })
         }
     }
@@ -40,6 +48,7 @@ impl Config {
 fn intersect_wordlists(
     wordlists: Vec<String>,
     min_word_length: usize,
+    require_diff_letters: bool,
 ) -> Result<Vec<String>, Box<dyn Error>> {
     let mut words = HashMap::new();
 
@@ -47,7 +56,14 @@ fn intersect_wordlists(
         let contents = fs::read_to_string(path)?;
 
         for (j, line) in contents.lines().enumerate() {
-            handle_line(&mut words, min_word_length, path, j, line)?;
+            handle_line(
+                &mut words,
+                min_word_length,
+                require_diff_letters,
+                path,
+                j,
+                line,
+            )?;
         }
 
         if words.is_empty() {
@@ -65,6 +81,7 @@ fn intersect_wordlists(
 fn handle_line(
     words: &mut HashMap<String, usize>,
     min_word_length: usize,
+    require_diff_letters: bool,
     path: &String,
     index: usize,
     line: &str,
@@ -73,7 +90,9 @@ fn handle_line(
 
     if let Some(word) = word {
         let word = normalize_word(word.to_owned());
-        if word.len() >= min_word_length {
+        if word.len() >= min_word_length
+            && !(require_diff_letters && word.chars().min() == word.chars().max())
+        {
             let count = words.entry(word).or_insert(0);
             *count += 1;
         }
