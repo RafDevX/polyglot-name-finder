@@ -1,11 +1,7 @@
 use std::{collections::HashMap, env, error::Error, fs};
 
 pub fn run(config: Config) -> Result<Vec<String>, Box<dyn Error>> {
-    let mut common_words = intersect_wordlists(
-        config.wordlist_file_paths,
-        config.min_word_length,
-        config.require_diff_letters,
-    )?;
+    let mut common_words = intersect_wordlists(&config)?;
 
     if config.sort {
         common_words.sort_unstable();
@@ -54,21 +50,17 @@ fn parse_env_var_bool(name: &str) -> bool {
     }
 }
 
-fn intersect_wordlists(
-    wordlists: Vec<String>,
-    min_word_length: usize,
-    require_diff_letters: bool,
-) -> Result<Vec<String>, Box<dyn Error>> {
+fn intersect_wordlists(config: &Config) -> Result<Vec<String>, Box<dyn Error>> {
     let mut words = HashMap::new();
 
-    for path in wordlists.iter() {
+    for path in config.wordlist_file_paths.iter() {
         let contents = fs::read_to_string(path)?;
 
         for (j, line) in contents.lines().enumerate() {
             handle_line(
                 &mut words,
-                min_word_length,
-                require_diff_letters,
+                config.min_word_length,
+                config.require_diff_letters,
                 path,
                 j,
                 line,
@@ -82,7 +74,7 @@ fn intersect_wordlists(
 
     Ok(words
         .iter()
-        .filter(|&(_k, &v)| v == wordlists.len())
+        .filter(|&(_k, &v)| v == config.wordlist_file_paths.len())
         .map(|entry| entry.0.clone())
         .collect())
 }
