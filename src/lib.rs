@@ -1,5 +1,4 @@
 use std::{collections::HashMap, env, error::Error, fs};
-use unidecode;
 
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let mut common_words = intersect_wordlists(
