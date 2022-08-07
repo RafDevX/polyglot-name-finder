@@ -13,7 +13,7 @@ cargo build --release
 Assuming your wordlists are wordlists at `wordlists/`:
 
 ```sh
-MIN_WORD_LENGTH=3 target/release/polyglot_name_finder wordlists/*.txt
+MIN_WORD_LENGTH=3 target/release/polyglot-name-finder wordlists/*.txt
 ```
 
 Use the `MIN_WORD_LENGTH` environment variable to filter out words you consider too short. Defaults to `1`.
